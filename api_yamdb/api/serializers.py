@@ -1,7 +1,5 @@
 from django.db.models import Avg
-
 from rest_framework import serializers
-
 from reviews.models import Category, Genre, Title, User, Review, Comment
 from reviews.validators import validate_username
 
@@ -11,21 +9,22 @@ class RegisterDataSerializer(serializers.Serializer):
         max_length=150,
         required=True,
         regex=r"^[\w.@+-]+\Z",
-        validators=[validate_username]
+        validators=[validate_username],
     )
-    email = serializers.EmailField(
-        max_length=254,
-        required=True
-    )
+    email = serializers.EmailField(max_length=254, required=True)
 
     def validate(self, data):
-        if User.objects.filter(username=data['username'],
-                               email=data['email']).exists():
+        if User.objects.filter(
+            username=data['username'], email=data['email']
+        ).exists():
             return data
-        if (User.objects.filter(username=data['username']).exists()
-                or User.objects.filter(email=data['email']).exists()):
+        if (
+            User.objects.filter(username=data['username']).exists()
+            or User.objects.filter(email=data['email']).exists()
+        ):
             raise serializers.ValidationError(
-                'Почта или имя уже использовались')
+                'Почта или имя уже использовались'
+            )
         return data
 
 
@@ -54,9 +53,7 @@ class CategorySerializer(serializers.ModelSerializer):
         model = Category
         exclude = ('id',)
         lookup_field = 'slug'
-        extra_kwargs = {
-            'url': {'lookup_field': 'slug'}
-        }
+        extra_kwargs = {'url': {'lookup_field': 'slug'}}
 
 
 class GenreSerializer(serializers.ModelSerializer):
@@ -64,9 +61,7 @@ class GenreSerializer(serializers.ModelSerializer):
         model = Genre
         exclude = ('id',)
         lookup_field = 'slug'
-        extra_kwargs = {
-            'url': {'lookup_field': 'slug'}
-        }
+        extra_kwargs = {'url': {'lookup_field': 'slug'}}
 
 
 class TitleListSerializer(serializers.ModelSerializer):
@@ -97,15 +92,15 @@ class TitleRetrieveSerializer(serializers.ModelSerializer):
 
 
 class TitlePostPatchSerializer(serializers.ModelSerializer):
-    genre = serializers.SlugRelatedField(required=True,
-                                         many=True,
-                                         slug_field='slug',
-                                         queryset=Genre.objects.all()
-                                         )
-    category = serializers.SlugRelatedField(required=True,
-                                            slug_field='slug',
-                                            queryset=Category.objects.all()
-                                            )
+    genre = serializers.SlugRelatedField(
+        required=True,
+        many=True,
+        slug_field='slug',
+        queryset=Genre.objects.all(),
+    )
+    category = serializers.SlugRelatedField(
+        required=True, slug_field='slug', queryset=Category.objects.all()
+    )
 
     class Meta:
         model = Title
@@ -116,7 +111,7 @@ class ReviewSerializer(serializers.ModelSerializer):
     author = serializers.SlugRelatedField(
         read_only=True,
         slug_field='username',
-        default=serializers.CurrentUserDefault()
+        default=serializers.CurrentUserDefault(),
     )
 
     class Meta:
@@ -129,7 +124,7 @@ class CommentSerializer(serializers.ModelSerializer):
     author = serializers.SlugRelatedField(
         read_only=True,
         slug_field='username',
-        default=serializers.CurrentUserDefault()
+        default=serializers.CurrentUserDefault(),
     )
 
     class Meta:

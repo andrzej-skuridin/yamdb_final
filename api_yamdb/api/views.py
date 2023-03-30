@@ -3,43 +3,38 @@ from django.contrib.auth.tokens import default_token_generator
 from django.core.mail import send_mail
 from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework import (filters,
-                            mixins,
-                            viewsets,
-                            status,
-                            serializers
-                            )
+from rest_framework import (
+    filters,
+    mixins,
+    status,
+    serializers,
+    viewsets,
+)
 from rest_framework.decorators import action, api_view, permission_classes
 from rest_framework.filters import SearchFilter
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import AccessToken
-
 from .filters import TitleFilter
-from .permissions import (IsAdminOrSuperUser,
-                          IsAdminOrSuperUserOrReadOnly,
-                          PermissionReviewComment
-                          )
+from .permissions import (
+    IsAdminOrSuperUser,
+    IsAdminOrSuperUserOrReadOnly,
+    PermissionReviewComment,
+)
+from api.serializers import (
+    CategorySerializer,
+    CommentSerializer,
+    GenreSerializer,
+    TitleListSerializer,
+    TitleRetrieveSerializer,
+    TitlePostPatchSerializer,
+    TokenAccessSerializer,
+    UserSerializer,
+    ReviewSerializer,
+    RegisterDataSerializer,
+)
 
-from api.serializers import (CategorySerializer,
-                             GenreSerializer,
-                             TitleListSerializer,
-                             TitleRetrieveSerializer,
-                             TitlePostPatchSerializer,
-                             UserSerializer,
-                             TokenAccessSerializer,
-                             ReviewSerializer,
-                             CommentSerializer,
-                             RegisterDataSerializer
-                             )
-
-from reviews.models import (Category,
-                            Comment,
-                            Genre,
-                            Review,
-                            Title,
-                            User
-                            )
+from reviews.models import Category, Comment, Genre, Review, Title, User
 
 
 # Система подтверждения через e-mail
@@ -50,8 +45,7 @@ def send_confirmation_code(request):
     serializer.is_valid(raise_exception=True)
 
     user, _ = User.objects.get_or_create(
-        username=serializer.data["username"],
-        email=serializer.data["email"]
+        username=serializer.data["username"], email=serializer.data["email"]
     )
 
     confirmation_code = default_token_generator.make_token(user)
@@ -61,7 +55,7 @@ def send_confirmation_code(request):
         message=f"Your confirmation code: {confirmation_code}",
         from_email=settings.DEFAULT_FROM_EMAIL,
         recipient_list=[user.email],
-        fail_silently=False
+        fail_silently=False,
     )
 
     return Response(serializer.data, status=status.HTTP_200_OK)
@@ -84,7 +78,7 @@ def token_access(request):
 
     return Response(
         {'confirmation_code': 'Неверный код подтверждения'},
-        status=status.HTTP_400_BAD_REQUEST
+        status=status.HTTP_400_BAD_REQUEST,
     )
 
 
@@ -108,19 +102,19 @@ class UserViewSet(viewsets.ModelViewSet):
             serializer = UserSerializer(request.user)
             return Response(serializer.data)
         serializer = UserSerializer(
-            request.user,
-            data=request.data,
-            partial=True
+            request.user, data=request.data, partial=True
         )
         serializer.is_valid(raise_exception=True)
         serializer.save(role=request.user.role)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 
-class ListAddDeleteViewSet(mixins.ListModelMixin,
-                           mixins.DestroyModelMixin,
-                           mixins.CreateModelMixin,
-                           viewsets.GenericViewSet):
+class ListAddDeleteViewSet(
+    mixins.ListModelMixin,
+    mixins.DestroyModelMixin,
+    mixins.CreateModelMixin,
+    viewsets.GenericViewSet,
+):
     pass
 
 
@@ -146,11 +140,7 @@ class TitleViewSet(viewsets.ModelViewSet):
     queryset = Title.objects.all()
     permission_classes = [IsAdminOrSuperUserOrReadOnly]
     filter_backends = (DjangoFilterBackend,)
-    filterset_fields = ('category',
-                        'name',
-                        'year',
-                        'genre'
-                        )
+    filterset_fields = ('category', 'name', 'year', 'genre')
     filterset_class = TitleFilter
 
     def get_serializer_class(self):
@@ -174,8 +164,8 @@ class ReviewViewSet(viewsets.ModelViewSet):
         title_id = self.kwargs.get("title_id")
         title = get_object_or_404(Title, id=title_id)
         queryset = Review.objects.filter(
-            title=title_id,
-            author=self.request.user)
+            title=title_id, author=self.request.user
+        )
         if len(queryset) > 0:
             raise serializers.ValidationError(
                 'Нельзя два раза писать отзыв на одно произведение!'

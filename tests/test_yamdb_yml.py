@@ -5,7 +5,6 @@ from .conftest import root_dir
 
 
 class TestWorkflow:
-
     def test_workflow(self):
         yamdb_workflow_basename = 'yamdb_workflow'
 
@@ -35,15 +34,21 @@ class TestWorkflow:
             with open(f'{os.path.join(root_dir, filename)}', 'r') as f:
                 yamdb = f.read()
         except FileNotFoundError:
-            assert False, f'Проверьте, что добавили файл {filename} в каталог {root_dir} для проверки'
+            assert (
+                False
+            ), f'Проверьте, что добавили файл {filename} в каталог {root_dir} для проверки'
 
         assert (
-                re.search(r'on:\s*push:\s*branches:\s*-\smaster', yamdb) or
-                'on: [push]' in yamdb or
-                'on: push' in yamdb
+            re.search(r'on:\s*push:\s*branches:\s*-\smaster', yamdb)
+            or 'on: [push]' in yamdb
+            or 'on: push' in yamdb
         ), f'Проверьте, что добавили действие при пуше в файл {filename}'
-        assert 'pytest' in yamdb, f'Проверьте, что добавили pytest в файл {filename}'
-        assert 'appleboy/ssh-action' in yamdb, f'Проверьте, что добавили деплой в файл {filename}'
+        assert (
+            'pytest' in yamdb
+        ), f'Проверьте, что добавили pytest в файл {filename}'
+        assert (
+            'appleboy/ssh-action' in yamdb
+        ), f'Проверьте, что добавили деплой в файл {filename}'
         assert 'appleboy/telegram-action' in yamdb, (
             'Проверьте, что настроили отправку telegram сообщения '
             f'в файл {filename}'

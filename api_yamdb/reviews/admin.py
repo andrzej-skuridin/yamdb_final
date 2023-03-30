@@ -21,49 +21,36 @@ class GenreAdmin(ImportExportModelAdmin):
 class TitleResource(resources.ModelResource):
     class Meta:
         model = Title
-        fields = ('id',
-                  'name',
-                  'year',
-                  'rating',
-                  'description',
-                  'category'
-                  )
+        fields = ('id', 'name', 'year', 'rating', 'description', 'category')
 
 
 @admin.register(Title)
 class TitleAdmin(ImportExportModelAdmin):
     resource_classes = (TitleResource,)
-    list_display = ('name',
-                    'year',
-                    'rating',
-                    'description',
-                    'category'
-                    )
+    list_display = ('name', 'year', 'rating', 'description', 'category')
 
 
 class GenreTitleResource(resources.ModelResource):
     title = Field(
         attribute='title',
         column_name='title_id',
-        widget=widgets.ForeignKeyWidget)
+        widget=widgets.ForeignKeyWidget,
+    )
     genre = Field(
         attribute='genre',
         column_name='genre_id',
-        widget=widgets.ForeignKeyWidget)
+        widget=widgets.ForeignKeyWidget,
+    )
 
     class Meta:
         model = GenreTitle
-        fields = ('id',
-                  'genre_id',
-                  'title_id')
+        fields = ('id', 'genre_id', 'title_id')
 
 
 @admin.register(GenreTitle)
 class GenreTitleAdmin(ImportExportModelAdmin):
     resource_classes = (GenreTitleResource,)
-    list_display = ('genre_id',
-                    'title_id'
-                    )
+    list_display = ('genre_id', 'title_id')
 
 
 class CategoryResource(resources.ModelResource):
@@ -92,11 +79,13 @@ class CommentResource(resources.ModelResource):
     review = Field(
         attribute='review',
         column_name='review_id',
-        widget=widgets.ForeignKeyWidget)
+        widget=widgets.ForeignKeyWidget,
+    )
     author = Field(
         attribute='author',
         column_name='author',
-        widget=widgets.ForeignKeyWidget)
+        widget=widgets.ForeignKeyWidget,
+    )
 
     class Meta:
         model = Category

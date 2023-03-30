@@ -1,11 +1,12 @@
 from django.db import models
 
 from django.contrib.auth.models import AbstractUser
-from django.core.validators import (MaxLengthValidator,
-                                    validate_slug,
-                                    MaxValueValidator,
-                                    MinValueValidator
-                                    )
+from django.core.validators import (
+    MaxLengthValidator,
+    validate_slug,
+    MaxValueValidator,
+    MinValueValidator,
+)
 
 
 class User(AbstractUser):
@@ -30,17 +31,17 @@ class User(AbstractUser):
 
 
 class Category(models.Model):
-    name = models.CharField(max_length=256,
-                            verbose_name='Категория',
-                            unique=True,
-                            validators=[MaxLengthValidator(limit_value=256)]
-                            )
-    slug = models.SlugField(unique=True,
-                            max_length=50,
-                            validators=[validate_slug,
-                                        MaxLengthValidator(limit_value=50)
-                                        ]
-                            )
+    name = models.CharField(
+        max_length=256,
+        verbose_name='Категория',
+        unique=True,
+        validators=[MaxLengthValidator(limit_value=256)],
+    )
+    slug = models.SlugField(
+        unique=True,
+        max_length=50,
+        validators=[validate_slug, MaxLengthValidator(limit_value=50)],
+    )
 
     class Meta:
         verbose_name = 'Категория'
@@ -52,17 +53,17 @@ class Category(models.Model):
 
 
 class Genre(models.Model):
-    name = models.CharField(max_length=256,
-                            verbose_name='Жанр',
-                            unique=True,
-                            validators=[MaxLengthValidator(limit_value=256)]
-                            )
-    slug = models.SlugField(unique=True,
-                            max_length=50,
-                            validators=[validate_slug,
-                                        MaxLengthValidator(limit_value=50)
-                                        ]
-                            )
+    name = models.CharField(
+        max_length=256,
+        verbose_name='Жанр',
+        unique=True,
+        validators=[MaxLengthValidator(limit_value=256)],
+    )
+    slug = models.SlugField(
+        unique=True,
+        max_length=50,
+        validators=[validate_slug, MaxLengthValidator(limit_value=50)],
+    )
 
     class Meta:
         verbose_name = 'Жанр'
@@ -74,28 +75,20 @@ class Genre(models.Model):
 
 
 class Title(models.Model):
-    name = models.CharField(max_length=256,
-                            verbose_name='Название',
-                            unique=True,
-                            validators=[MaxLengthValidator(limit_value=256)]
-                            )
-    year = models.IntegerField(blank=True,
-                               null=True,
-                               verbose_name='Год выпуска')
-    rating = models.FloatField(blank=True,
-                               null=True)
-    description = models.CharField(max_length=200,
-                                   verbose_name='Описание')
-    genre = models.ManyToManyField(
-        Genre,
-        through='GenreTitle',
-        blank=True
+    name = models.CharField(
+        max_length=256,
+        verbose_name='Название',
+        unique=True,
+        validators=[MaxLengthValidator(limit_value=256)],
     )
+    year = models.IntegerField(
+        blank=True, null=True, verbose_name='Год выпуска'
+    )
+    rating = models.FloatField(blank=True, null=True)
+    description = models.CharField(max_length=200, verbose_name='Описание')
+    genre = models.ManyToManyField(Genre, through='GenreTitle', blank=True)
     category = models.ForeignKey(
-        Category,
-        on_delete=models.SET_NULL,
-        related_name='titles',
-        null=True
+        Category, on_delete=models.SET_NULL, related_name='titles', null=True
     )
 
     class Meta:
@@ -108,18 +101,20 @@ class Title(models.Model):
 
 
 class GenreTitle(models.Model):
-    genre = models.ForeignKey(Genre,
-                              db_column='genre_id',
-                              on_delete=models.CASCADE,
-                              blank=True,
-                              null=True,
-                              )
-    title = models.ForeignKey(Title,
-                              db_column='title_id',
-                              on_delete=models.CASCADE,
-                              blank=True,
-                              null=True,
-                              )
+    genre = models.ForeignKey(
+        Genre,
+        db_column='genre_id',
+        on_delete=models.CASCADE,
+        blank=True,
+        null=True,
+    )
+    title = models.ForeignKey(
+        Title,
+        db_column='title_id',
+        on_delete=models.CASCADE,
+        blank=True,
+        null=True,
+    )
 
     class Meta:
         verbose_name = 'Жанр/Произведение'
@@ -136,8 +131,8 @@ class Review(models.Model):
     )
     text = models.TextField()
     score = models.SmallIntegerField(
-        validators=[MaxValueValidator(10),
-                    MinValueValidator(1)])
+        validators=[MaxValueValidator(10), MinValueValidator(1)]
+    )
     pub_date = models.DateTimeField(
         'Дата добавления', auto_now_add=True, db_index=True
     )
@@ -145,8 +140,7 @@ class Review(models.Model):
     class Meta:
         constraints = [
             models.UniqueConstraint(
-                fields=['title', 'author'],
-                name='unique_title_author'
+                fields=['title', 'author'], name='unique_title_author'
             )
         ]
         verbose_name = 'Отзыв'
