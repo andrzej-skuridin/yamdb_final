@@ -49,7 +49,7 @@ jobs:
           uses: docker/build-push-action@v2
           with:
             push: true
-            tags: morhond/infra_actions:latest
+            tags: morhond/yamdb_final:latest
 
   deploy:
     runs-on: ubuntu-latest
