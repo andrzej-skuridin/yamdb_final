@@ -1,40 +1,24 @@
+from api.serializers import (CategorySerializer, CommentSerializer,
+                             GenreSerializer, RegisterDataSerializer,
+                             ReviewSerializer, TitleListSerializer,
+                             TitlePostPatchSerializer, TitleRetrieveSerializer,
+                             TokenAccessSerializer, UserSerializer)
 from django.conf import settings
 from django.contrib.auth.tokens import default_token_generator
 from django.core.mail import send_mail
 from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework import (
-    filters,
-    mixins,
-    status,
-    serializers,
-    viewsets,
-)
+from rest_framework import filters, mixins, serializers, status, viewsets
 from rest_framework.decorators import action, api_view, permission_classes
 from rest_framework.filters import SearchFilter
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import AccessToken
-from .filters import TitleFilter
-from .permissions import (
-    IsAdminOrSuperUser,
-    IsAdminOrSuperUserOrReadOnly,
-    PermissionReviewComment,
-)
-from api.serializers import (
-    CategorySerializer,
-    CommentSerializer,
-    GenreSerializer,
-    TitleListSerializer,
-    TitleRetrieveSerializer,
-    TitlePostPatchSerializer,
-    TokenAccessSerializer,
-    UserSerializer,
-    ReviewSerializer,
-    RegisterDataSerializer,
-)
-
 from reviews.models import Category, Comment, Genre, Review, Title, User
+
+from .filters import TitleFilter
+from .permissions import (IsAdminOrSuperUser, IsAdminOrSuperUserOrReadOnly,
+                          PermissionReviewComment)
 
 
 # Система подтверждения через e-mail

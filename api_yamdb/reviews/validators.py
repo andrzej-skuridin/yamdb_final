@@ -1,6 +1,5 @@
 from django.core.exceptions import ValidationError
 
-
 FORBIDDEN_NAMES = ('me', 'ME', 'Me', 'mE')
 
 
